@@ -35,17 +35,24 @@ int main(){
 
         // 3. 입력받은 좌표의 유효성 체크
         if (x >= numCell || y >= numCell){
-            cout << x << ", " << ": ";
+            cout << x << ", " << y << ": ";
             cout << "x와 y중 둘 중 하나가 칸을 벗어납니다." << endl;
             continue;
         }
-        if (board[numCell - 1 - y][x] == 'X' || board[numCell - 1 - y][x] == 'O'){
-            cout << "이미 칸을 사용했습니다." << endl;
+
+        // 2-2. 좌표 변환
+        int tmp = y;
+        y = x;
+        x = numCell - 1 - tmp;
+
+        // 3-2. 입력받은 좌표의 유효성 체크
+        if (board[x][y] != ' '){
+            cout << x << ", " << y << ": 이미 돌이 차있습니다." << endl;
             continue;
         }
 
         // 4. 입력받은 좌표에 현재 유저의 돌 놓기
-        board[numCell - 1 - y][x] = currentUser;
+        board[x][y] = currentUser;
 
         // 5. 현재 보드 판 출력
         for (int i = 0; i < numCell; i++){
@@ -63,10 +70,11 @@ int main(){
 
         // 6. 빙고 시 승자 출력 후 종료
         if (k >= 4){ // k < 4 이면 승자가 나올 수 없다
-            int i, j;
-            for (int i = 0; i < numCell; i++){ // 가로
+            int i = 0, j = 0;
+            for (i = 0; i < numCell; i++){ // 가로
                 for (j = 0; j < numCell - 1; j++){
-                    if(board[i][j] == board[i][j+1]) continue;
+                    if (board[i][j] == ' ') break;
+                    if (board[i][j] == board[i][j+1]) continue;
                     else break;
                 }
                 if (j == numCell - 1){
@@ -75,18 +83,20 @@ int main(){
                 }
             }
 
-            for (int i = 0; i < numCell; i++){ // 세로
-                for (j = 0; j < numCell - 1; j++){
-                    if (board[j][i] == board[j][i+1]) continue;
+            for (j = 0; j < numCell; j++){ // 세로
+                for (i = 0; i < numCell - 1; i++){
+                    if (board[i][j] == ' ') break;
+                    if (board[i][j] == board[i+1][j]) continue;
                     else break;
                 }
-                if (j == numCell - 1){
-                    cout << board[j][i] << "의 승리입니다" << endl;
+                if (i == numCell - 1){
+                    cout << board[i][j] << "의 승리입니다" << endl;
                     return 0;
                 }
             }
             
-            for (int i = 0; i < numCell - 1; i++){ // 대각선
+            for (i = 0; i < numCell - 1; i++){ // 대각선
+                if (board[i][i] == ' ') break;
                 if (board[i][i] == board[i+1][i+1]) continue;
                 else break;
             }
@@ -95,12 +105,13 @@ int main(){
                 return 0;
             }
 
-            for (int i = 0; i < numCell - 1; i++){ // 대각선
-                if (board[numCell-i][i] == board[numCell-(i+1)][i+1]) continue;
+            for (i = 0; i < numCell - 1; i++){ // 대각선
+                if (board[(numCell-1)-i][i] == ' ') break;
+                if (board[(numCell-1)-i][i] == board[(numCell-1)-(i+1)][i+1]) continue;
                 else break;
             }
             if (i == numCell - 1){
-                cout << board[i][i] << "의 승리입니다" << endl;
+                cout << board[(numCell-1)-i][i] << "의 승리입니다" << endl;
                 return 0;
             }
         }
